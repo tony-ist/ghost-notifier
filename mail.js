@@ -13,51 +13,56 @@ const token = jwt.sign({}, Buffer.from(secret, 'hex'), {
   audience: `/v2/admin/`
 })
 
+const headers = { Authorization: `Ghost ${token}` }
+
 async function getSubscribers() {
   const ghostUrl = url.resolve(config.baseUrl, 'ghost/api/v2/admin/subscribers/')
-  const headers = { Authorization: `Ghost ${token}` }
   const response = await axios.get(ghostUrl, { headers })
 
   return response.data.subscribers
 }
 
-async function sendMail(){
-  // Generate test SMTP service account from ethereal.email
-  // Only needed if you don't have a real mail account for testing
-  // const testAccount = await nodemailer.createTestAccount();
+async function getPosts() {
+  const ghostUrl = url.resolve(config.baseUrl, 'ghost/api/v2/admin/posts/')
+  const response = await axios.get(ghostUrl, { headers })
 
-  // create reusable transporter object using the default SMTP transport
+  return response.data.posts
+}
+
+async function sendMail(recipient, post){
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: config.mailHost,
     port: 465,
-    secure: true, // true for 465, false for other ports
+    secure: true,
     auth: {
-      user: config.mailUser, // generated ethereal user
-      pass: config.mailPassword // generated ethereal password
+      user: config.mailUser,
+      pass: config.mailPassword
     }
   });
 
-  // send mail with defined transport object
   const info = await transporter.sendMail({
-    from: '"Fred Foo 👻" <foo@example.com>', // sender address
-    to: 'istomanton@gmail.com', // list of receivers
-    subject: 'Hello ✔', // Subject line
-    text: 'Hello world?', // plain text body
-    html: '<b>Hello world?</b>' // html body
+    from: `"Programming and stuff 👻" <${config.mailUser}>`,
+    to: recipient,
+    subject: `New post: ${post.title}`,
+    text: `New post in ReFruity's "Programming and stuff" blog: ${post.canonical_url}`
   });
 
   console.log('Message sent: %s', info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  // Preview only available when sending through an Ethereal account
-  // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
 async function start() {
   const subscribers = await getSubscribers()
-  console.log(subscribers)
-  await sendMail()
+  // console.log(subscribers)
+
+  const posts = await getPosts()
+  // console.log(posts.map(p => ({ title: p.title, url: p.url, canonicalUrl: p.canonical_url })))
+
+  const post = posts.find(p => p.id === '5d39d901dfe0fa00011ac63b')
+
+  for (let i in subscribers) {
+    await sendMail(subscribers[i].email, post)
+  }
+
 }
 
 start().catch(console.error)
