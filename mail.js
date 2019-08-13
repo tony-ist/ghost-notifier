@@ -38,31 +38,40 @@ async function sendMail(recipient, post){
       user: config.mailUser,
       pass: config.mailPassword
     }
-  });
+  })
 
   const info = await transporter.sendMail({
-    from: `"Programming and stuff 👻" <${config.mailUser}>`,
+    from: `"Programming and Stuff 👻" <${config.mailUser}>`,
     to: recipient,
     subject: `New post: ${post.title}`,
-    text: `New post in ReFruity's "Programming and stuff" blog: ${post.canonical_url}`
-  });
+    text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url}`
+  })
 
-  console.log('Message sent: %s', info.messageId);
+  console.log(`Message sent to ${recipient}: ${info.messageId}`)
 }
 
 async function start() {
   const subscribers = await getSubscribers()
-  // console.log(subscribers)
 
-  const posts = await getPosts()
-  // console.log(posts.map(p => ({ title: p.title, url: p.url, canonicalUrl: p.canonical_url })))
-
-  const post = posts.find(p => p.id === '5d39d901dfe0fa00011ac63b')
-
-  for (let i in subscribers) {
-    await sendMail(subscribers[i].email, post)
+  if (subscribers.length === 0) {
+    console.log('No subscribers found.')
+    return
   }
 
+  const posts = await getPosts()
+
+  posts.sort((p1, p2) => new Date(p2.published_at) - new Date(p1.published_at))
+
+  if (posts.length === 0) {
+    console.log('No posts found.')
+    return
+  }
+
+  const latestPublishedPost = posts[0]
+
+  for (let subscriber of subscribers) {
+    await sendMail(subscriber.email, latestPublishedPost)
+  }
 }
 
 start().catch(console.error)
