@@ -50,7 +50,7 @@ async function sendMail(recipient, post){
   console.log(`Message sent to ${recipient}: ${info.messageId}`)
 }
 
-async function start() {
+async function send() {
   const subscribers = await getSubscribers()
 
   if (subscribers.length === 0) {
@@ -74,4 +74,4 @@ async function start() {
   }
 }
 
-start().catch(console.error)
+module.exports = { send }
