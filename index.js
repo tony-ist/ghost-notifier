@@ -5,14 +5,23 @@ const mail = require('./mail')
 
 const app = express()
 const port = config.port
+const webhookUrl = config.webhookUrl
 
-app.use(bodyParser)
+app.use(bodyParser.json())
 
-app.post('/webhook', async (req, res) => {
-  console.log(req.body)
-  console.log('/webhook post triggered')
+app.post(webhookUrl, async (req, res) => {
+  console.log('Webhook post triggered')
+  console.log(`Request body: ${req.body}`)
 
-  res.send(200)
+  try {
+    await mail.send(req.body)
+  } catch (error) {
+    console.error(error)
+    res.sendStatus(500)
+    return
+  }
+
+  res.sendStatus(200)
 })
 
 app.listen(port, () => console.log(`Ghost notifier listening on port ${port}!`))

@@ -40,6 +40,7 @@ async function sendMail(recipient, post){
     }
   })
 
+  // TODO: Extract mail template
   const info = await transporter.sendMail({
     from: `"Programming and Stuff 👻" <${config.mailUser}>`,
     to: recipient,
@@ -47,10 +48,10 @@ async function sendMail(recipient, post){
     text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url}`
   })
 
-  console.log(`Message sent to ${recipient}: ${info.messageId}`)
+  console.log(`Message sent to ${recipient}: ${info.messageId}.`)
 }
 
-async function send() {
+async function send(postRequestBody) {
   const subscribers = await getSubscribers()
 
   if (subscribers.length === 0) {
@@ -60,17 +61,25 @@ async function send() {
 
   const posts = await getPosts()
 
-  posts.sort((p1, p2) => new Date(p2.published_at) - new Date(p1.published_at))
-
   if (posts.length === 0) {
-    console.log('No posts found.')
+    console.error('No posts found.')
     return
   }
 
-  const latestPublishedPost = posts[0]
+  const publishedPost = posts.find(p => p.uuid === postRequestBody.current.uuid)
+
+  if (!publishedPost) {
+    console.error(`No post with uuid ${postRequestBody.current.uuid} found.`)
+    return
+  }
+
+  if (publishedPost.status !== 'published') {
+    console.error(`Error: trying to notify about post with status: ${publishedPost.status}.`)
+    return
+  }
 
   for (let subscriber of subscribers) {
-    await sendMail(subscriber.email, latestPublishedPost)
+    await sendMail(subscriber.email, publishedPost)
   }
 }
 
