@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const config = require('./config')
 const mail = require('./mail')
 const telegram = require('./telegram')
+const service = require('./service')
 
 const app = express()
 const port = config.port
@@ -14,9 +15,18 @@ app.post(`/${webhookUrl}`, async (request, response) => {
   console.log('Webhook post triggered')
   console.log(`Request body: ${JSON.stringify(request.body, null, 2)}`)
 
+  const validationResult = await service.validate(request.body)
+
+  if (!validationResult) {
+    response.sendStatus(200)
+    return
+  }
+
+  const publishedPost = request.body.current
+
   try {
-    await mail.send(request.body)
-    await telegram.send(request.body)
+    await mail.send(publishedPost)
+    await telegram.send(publishedPost)
   } catch (error) {
     console.error(error)
     response.sendStatus(500)
