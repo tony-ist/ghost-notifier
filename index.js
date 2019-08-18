@@ -9,9 +9,9 @@ const webhookUrl = config.webhookUrl
 
 app.use(bodyParser.json())
 
-app.post(webhookUrl, async (req, res) => {
+app.post(`/${webhookUrl}`, async (req, res) => {
   console.log('Webhook post triggered')
-  console.log(`Request body: ${req.body}`)
+  console.log(`Request body: ${JSON.stringify(req.body, null, 2)}`)
 
   try {
     await mail.send(req.body)

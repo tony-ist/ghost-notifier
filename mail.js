@@ -52,6 +52,11 @@ async function sendMail(recipient, post){
 }
 
 async function send(postRequestBody) {
+  if (!postRequestBody.current || !postRequestBody.current.uuid) {
+    console.error('Malformed POST body.')
+    return
+  }
+
   const subscribers = await getSubscribers()
 
   if (subscribers.length === 0) {
@@ -79,7 +84,9 @@ async function send(postRequestBody) {
   }
 
   for (let subscriber of subscribers) {
-    await sendMail(subscriber.email, publishedPost)
+    if (subscriber.status === 'subscribed') {
+      await sendMail(subscriber.email, publishedPost)
+    }
   }
 }
 
