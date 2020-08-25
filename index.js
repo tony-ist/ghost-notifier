@@ -15,14 +15,14 @@ app.post(`/${webhookUrl}`, async (request, response) => {
   console.log('Webhook post triggered')
   console.log(`Request body: ${JSON.stringify(request.body, null, 2)}`)
 
-  const validationResult = await service.validate(request.body)
+  const validationResult = await service.validate(request.body.post)
 
   if (!validationResult) {
     response.sendStatus(200)
     return
   }
 
-  const publishedPost = request.body.current
+  const publishedPost = request.body.post.current
 
   try {
     await mail.send(publishedPost)

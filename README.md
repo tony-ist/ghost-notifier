@@ -1,3 +1,5 @@
+## What it does
+
 Notifies by email and telegram channel your ghost subscribers when new post is published. 
 
 ## Requirements
@@ -8,7 +10,7 @@ Notifies by email and telegram channel your ghost subscribers when new post is p
 ```
 {
     adminApiKey: 'sample:key',
-    baseUrl: 'http://example.com',
+    ghostBaseUrl: 'http://example.com',
     mailHost: 'smtp.example.com',
     mailUser: 'info@example.com',
     mailPassword: 'secretlysecret',

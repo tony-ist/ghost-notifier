@@ -9,44 +9,71 @@ const token = jwt.sign({}, Buffer.from(secret, 'hex'), {
   keyid: id,
   algorithm: 'HS256',
   expiresIn: '5m',
-  audience: `/v2/admin/`
+  audience: '/v2/admin/'
 })
 
 const headers = { Authorization: `Ghost ${token}` }
 
 async function getSubscribers() {
-  const ghostUrl = url.resolve(config.baseUrl, 'ghost/api/v2/admin/subscribers/')
+  const ghostUrl = url.resolve(config.ghostBaseUrl, 'ghost/api/v2/admin/subscribers/')
   const response = await axios.get(ghostUrl, { headers })
 
   return response.data.subscribers
 }
 
 async function getPosts() {
-  const ghostUrl = url.resolve(config.baseUrl, 'ghost/api/v2/admin/posts/')
+  const ghostUrl = url.resolve(config.ghostBaseUrl, 'ghost/api/v2/admin/posts/')
   const response = await axios.get(ghostUrl, { headers })
 
   return response.data.posts
 }
 
 async function validate(postRequestBody) {
-  if (!postRequestBody.current || !postRequestBody.current.uuid || !postRequestBody.current.title) {
+  if (!postRequestBody || !postRequestBody.current || !postRequestBody.current.uuid
+      || !postRequestBody.current.title) {
     console.error('Malformed POST body.')
     return false
   }
 
-  if (!postRequestBody.current.canonical_url) {
-    console.error('No canonical URL for post.')
-    return false
+  let url = postRequestBody.current.canonical_url
+
+  if (!url) {
+    console.error('No canonical URL for post. Using standard URL.')
+    url = postRequestBody.current.url;
   }
 
-  const subscribers = await getSubscribers()
+  console.log('Getting ghost subscribers list...')
+
+  let subscribers = []
+
+  try {
+    subscribers = await getSubscribers()
+  } catch(error) {
+    console.log('Error getting ghost subscribers!')
+    console.error(error)
+    return false
+  }
 
   if (subscribers.length === 0) {
     console.log('No subscribers found.')
     return false
   }
 
-  const posts = await getPosts()
+  console.log(`Successfuly found ${subscribers.length} subscribers.`)
+
+  console.log('Getting ghost posts list...')
+
+  let posts = []
+
+  try {
+    posts = await getPosts()
+  } catch(error) {
+    console.log('Error getting ghost posts!')
+    console.error(error)
+    return false
+  }
+
+  console.log(`Successfully fetched ${posts.length} posts from ghost!`)
 
   if (posts.length === 0) {
     console.error('No posts found.')

@@ -18,7 +18,7 @@ async function sendMail(recipient, post){
     from: `"Programming and Stuff 👻" <${config.mailUser}>`,
     to: recipient,
     subject: `New post: ${post.title}`,
-    text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url}`
+    text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url || post.url}`
   })
 
   console.log(`Message sent to ${recipient}: ${info.messageId}.`)
