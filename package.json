@@ -2,11 +2,15 @@
   "name": "ghost-notifier",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
+  "engines": {
+    "node": "16.14.2",
+    "npm": "8.5.0"
+  },
   "scripts": {
-    "start": "NODE_ENV=development node index.js",
-    "mail": "NODE_ENV=development node mail.js",
-    "telegram": "NODE_ENV=development node telegram.js"
+    "start": "NODE_ENV=development node src/index.js",
+    "mail": "NODE_ENV=development node src/mail.js",
+    "telegram": "NODE_ENV=development node src/telegram.js"
   },
   "repository": {
     "type": "git",

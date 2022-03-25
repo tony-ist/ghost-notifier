@@ -59,7 +59,7 @@ async function validate(postRequestBody) {
     return false
   }
 
-  console.log(`Successfuly found ${subscribers.length} subscribers.`)
+  console.log(`Successfully found ${subscribers.length} subscribers.`)
 
   console.log('Getting ghost posts list...')
 
