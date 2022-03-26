@@ -9,6 +9,8 @@ const app = express()
 const port = config.port
 const webhookUrl = config.webhookUrl
 
+console.log(`Node env is ${process.env.NODE_ENV === 'development' ? 'development' : 'production'}`)
+
 app.use(bodyParser.json())
 
 app.post(`/${webhookUrl}`, async (request, response) => {

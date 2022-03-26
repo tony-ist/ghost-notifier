@@ -8,9 +8,7 @@
     "npm": "8.5.0"
   },
   "scripts": {
-    "start": "NODE_ENV=development node src/index.js",
-    "mail": "NODE_ENV=development node src/mail.js",
-    "telegram": "NODE_ENV=development node src/telegram.js"
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",

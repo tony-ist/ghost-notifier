@@ -20,9 +20,10 @@ Notifies by email and telegram channel your ghost subscribers when new post is p
     telegramChatId: '@example',
     proxyHost: 'localhost',
     proxyPort: 1080,
+    useTelegramProxy: false,
 }
 ``` 
 
 ## Development
 
-You can use `ssh -D 1080 user@host -N -v` to enable port forwarding if telegram is blocked in your country. 
+You can use `useTelegramProxy: true` and `ssh -D 1080 user@host -N -v` to enable port forwarding if telegram is blocked in your country. 

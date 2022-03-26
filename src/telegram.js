@@ -4,7 +4,7 @@ const config = require('./config')
 
 let axiosClient = axios.create()
 
-if (process.env.NODE_ENV === 'development' && config.useTelegramProxy) {
+if (config.useTelegramProxy) {
   const { proxyHost, proxyPort } = config
   const proxyOptions = `socks5://${proxyHost}:${proxyPort}`
   const httpsAgent = new SocksProxyAgent(proxyOptions)

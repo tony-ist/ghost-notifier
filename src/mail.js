@@ -13,12 +13,17 @@ async function sendMail(recipient, post){
     }
   })
 
+  const text = `
+    New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url ?? post.url}
+    <small>To unsubscribe, reply to this email with "unsubscribe".</small>
+  `
+
   // TODO: Extract mail template
   const info = await transporter.sendMail({
     from: `"Programming and Stuff 👻" <${config.mailUser}>`,
     to: recipient,
     subject: `New post: ${post.title}`,
-    text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url ?? post.url}`
+    text
   })
 
   console.log(`Message sent to ${recipient}: ${info.messageId}.`)
