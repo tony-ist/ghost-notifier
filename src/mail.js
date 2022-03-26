@@ -18,7 +18,7 @@ async function sendMail(recipient, post){
     from: `"Programming and Stuff 👻" <${config.mailUser}>`,
     to: recipient,
     subject: `New post: ${post.title}`,
-    text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url || post.url}`
+    text: `New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url ?? post.url}`
   })
 
   console.log(`Message sent to ${recipient}: ${info.messageId}.`)
@@ -30,7 +30,7 @@ async function send(publishedPost) {
   console.log(subscribers)
 
   for (let subscriber of subscribers) {
-    if (subscriber.status === 'subscribed') {
+    if (subscriber.subscribed === true) {
       await sendMail(subscriber.email, publishedPost)
     }
   }

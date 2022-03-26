@@ -18,10 +18,12 @@ app.post(`/${webhookUrl}`, async (request, response) => {
   const validationResult = await service.validate(request.body.post)
 
   if (!validationResult) {
-    // TODO: May be sleep for random amount of seconds to prevent brute force attacks?
+    // TODO: Maybe sleep for random amount of seconds to prevent brute force attacks?
     response.sendStatus(200)
     return
   }
+
+  console.log('Post validation successful')
 
   const publishedPost = request.body.post.current
 

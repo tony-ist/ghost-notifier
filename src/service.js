@@ -9,28 +9,27 @@ const token = jwt.sign({}, Buffer.from(secret, 'hex'), {
   keyid: id,
   algorithm: 'HS256',
   expiresIn: '5m',
-  audience: '/v2/admin/'
+  audience: '/v3/admin/'
 })
 
 const headers = { Authorization: `Ghost ${token}` }
 
 async function getSubscribers() {
-  const ghostUrl = url.resolve(config.ghostBaseUrl, 'ghost/api/v2/admin/subscribers/')
+  const ghostUrl = url.resolve(config.ghostBaseUrl, 'ghost/api/v3/admin/members/')
   const response = await axios.get(ghostUrl, { headers })
 
-  return response.data.subscribers
+  return response.data.members
 }
 
 async function getPosts() {
-  const ghostUrl = url.resolve(config.ghostBaseUrl, 'ghost/api/v2/admin/posts/')
+  const ghostUrl = url.resolve(config.ghostBaseUrl, 'ghost/api/v3/admin/posts/')
   const response = await axios.get(ghostUrl, { headers })
 
   return response.data.posts
 }
 
 async function validate(postRequestBody) {
-  if (!postRequestBody || !postRequestBody.current || !postRequestBody.current.uuid
-      || !postRequestBody.current.title) {
+  if (!postRequestBody?.current?.title) {
     console.error('Malformed POST body.')
     return false
   }
