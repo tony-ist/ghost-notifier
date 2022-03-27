@@ -13,9 +13,15 @@ async function sendMail(recipient, post){
     }
   })
 
+  const html = `
+    <div>New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url ?? post.url}</div>
+    <br>
+    <small>To unsubscribe, reply to this email with "unsubscribe".</small>
+  `
+
   const text = `
     New post in ReFruity's "Programming and Stuff" blog: ${post.canonical_url ?? post.url}
-    <small>To unsubscribe, reply to this email with "unsubscribe".</small>
+    To unsubscribe, reply to this email with "unsubscribe".
   `
 
   // TODO: Extract mail template
@@ -23,7 +29,8 @@ async function sendMail(recipient, post){
     from: `"Programming and Stuff 👻" <${config.mailUser}>`,
     to: recipient,
     subject: `New post: ${post.title}`,
-    text
+    text,
+    html
   })
 
   console.log(`Message sent to ${recipient}: ${info.messageId}.`)
